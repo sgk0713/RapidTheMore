@@ -27,6 +27,21 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions 'app'
+
+    productFlavors {
+        production {
+            dimension 'app'
+        }
+        qa {
+            dimension 'app'
+            applicationIdSuffix '.test'
+        }
     }
 
     buildFeatures {
@@ -40,6 +55,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    setProperty("archivesBaseName", "v${defaultConfig.versionName}(${defaultConfig.versionCode})")
 }
 
 dependencies {
