@@ -18,6 +18,7 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -81,6 +82,9 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.38.1")
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+
+    implementation 'com.google.android.gms:play-services-ads:20.5.0' // admob
+    implementation project(':nativetemplates') // admob
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
