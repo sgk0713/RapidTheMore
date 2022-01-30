@@ -74,6 +74,16 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                     loadBanner()
                 }
             }
+            bannerWebView.settings.javaScriptEnabled = true
+            val script = """
+                <script src ="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                new PartnersCoupang.G({
+                    ${getString(R.string.coupang_json)}
+                });</script>
+            """.trimIndent()
+            val html = "<div>$script</div>"
+            bannerWebView.loadData(html, "text/html", "utf-8")
         }
     }
 
