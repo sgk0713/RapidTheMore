@@ -3,12 +3,14 @@ package com.evangers.rapidthemore.ui.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.evangers.rapidthemore.R
 import com.evangers.rapidthemore.databinding.FragmentHomeBinding
 import com.evangers.rapidthemore.ui.base.ParentFragment
 import com.evangers.rapidthemore.ui.util.shortToast
+import com.google.android.gms.ads.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
 
@@ -18,11 +20,35 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var binding: FragmentHomeBinding
+
+    private lateinit var adView: AdView
+    private var initialLayoutComplete = false
+    private val adSize: AdSize
+        get() {
+            val display = requireActivity().windowManager.defaultDisplay
+            val outMetrics = DisplayMetrics()
+            display.getMetrics(outMetrics)
+
+            val density = outMetrics.density
+
+            var adWidthPixels = binding.adViewContainer.width.toFloat()
+            if (adWidthPixels == 0f) {
+                adWidthPixels = outMetrics.widthPixels.toFloat()
+            }
+
+            val adWidth = (adWidthPixels / density).toInt()
+            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+                requireContext(),
+                adWidth
+            )
+        }
+
     override fun bindView(view: View) {
         binding = FragmentHomeBinding.bind(view)
     }
 
     override fun initUi() {
+        initialLayoutComplete = false
         with(binding) {
             paycoButton.setOnClickListener { viewModel.launchPayco() }
             launchSPay.setOnClickListener { viewModel.launchSpay() }
@@ -39,6 +65,14 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 button9.setOnClickListener { viewModel.addDigitLast(9) }
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
+            }
+            adView = AdView(requireContext())
+            adViewContainer.addView(adView)
+            adViewContainer.viewTreeObserver.addOnGlobalLayoutListener {
+                if (!initialLayoutComplete) {
+                    initialLayoutComplete = true
+                    loadBanner()
+                }
             }
         }
     }
@@ -98,4 +132,14 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             viewModel.showToast(getString(R.string.no_spay_app))
         }
     }
+
+    private fun loadBanner() {
+        adView.adUnitId = getString(R.string.admob_home_banner_unit_id)
+        adView.adSize = adSize
+        val adRequest = AdRequest
+            .Builder()
+            .build()
+        adView.loadAd(adRequest)
+    }
+
 }
