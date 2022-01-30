@@ -70,5 +70,5 @@ local.properties
 
 # 안드로이드 툴로 화면 캡쳐한 파일들 저장되는 디렉토리
 captures/
-
+app/src/main/res/values/strings_core.xml
 google-services.json

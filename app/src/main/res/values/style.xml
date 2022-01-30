@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Widget.AppCompat.Button.Number" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/circle_button</item>
+        <item name="android:textColor">#ffff</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">4sp</item>
+        <item name="autoSizeMaxTextSize">28sp</item>
+
+    </style>
+</resources>
