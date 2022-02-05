@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.evangers.rapidthemore.R
 import com.evangers.rapidthemore.databinding.FragmentHomeBinding
 import com.evangers.rapidthemore.ui.base.ParentFragment
+import com.evangers.rapidthemore.ui.util.longToast
 import com.evangers.rapidthemore.ui.util.shortToast
 import com.google.android.gms.ads.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,6 +104,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             }
             state.toastMessage?.getValueIfNotHandled()?.let {
                 requireContext().shortToast(it)
+            }
+            state.longToastMessage?.getValueIfNotHandled()?.let {
+                requireContext().longToast(it)
             }
             state.launchPayco?.getValueIfNotHandled()?.let {
                 launchPayco()

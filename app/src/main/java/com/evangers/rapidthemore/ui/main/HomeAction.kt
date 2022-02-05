@@ -12,4 +12,5 @@ sealed class HomeAction {
     class UpdateRatio(val ratio: Float) : HomeAction()
     class UpdateAmount(val number: BigDecimal) : HomeAction()
     class ShowToast(val msg: String) : HomeAction()
+    class ShowLongToast(val msg: String) : HomeAction()
 }

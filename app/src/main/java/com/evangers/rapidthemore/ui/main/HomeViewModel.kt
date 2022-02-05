@@ -115,7 +115,7 @@ class HomeViewModel @Inject constructor(
 
     fun showPercentToast() {
         val ratioText = "${state.ratio.getValue() ?: 0.0}%"
-        state.update(HomeAction.ShowToast(ratioText))
+        state.update(HomeAction.ShowLongToast(ratioText))
         liveData.postValue(state)
     }
 
