@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/transparent_rectangle_button"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +12,6 @@
         android:layout_height="0dp"
         android:text="@string/no_9"
         app:layout_constraintBottom_toTopOf="@id/buttonRemove"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button8"
         app:layout_constraintTop_toBottomOf="@id/button6" />
@@ -24,7 +24,6 @@
         android:layout_height="0dp"
         android:text="@string/no_8"
         app:layout_constraintBottom_toTopOf="@id/button0"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button9"
         app:layout_constraintStart_toEndOf="@id/button7"
         app:layout_constraintTop_toBottomOf="@id/button5" />
@@ -36,7 +35,6 @@
         android:layout_height="0dp"
         android:text="@string/no_7"
         app:layout_constraintBottom_toTopOf="@id/button_clear"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button4" />
@@ -49,7 +47,6 @@
         android:text="@string/no_4"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/button7"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button1" />
@@ -62,7 +59,6 @@
         android:text="@string/no_5"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/button8"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button6"
         app:layout_constraintStart_toEndOf="@id/button4"
         app:layout_constraintTop_toBottomOf="@id/button2" />
@@ -74,7 +70,6 @@
         android:layout_height="0dp"
         android:text="@string/no_6"
         app:layout_constraintBottom_toTopOf="@id/button9"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button5"
         app:layout_constraintTop_toBottomOf="@id/button3" />
@@ -86,7 +81,6 @@
         android:layout_height="0dp"
         android:text="@string/no_1"
         app:layout_constraintBottom_toTopOf="@id/button4"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -98,7 +92,6 @@
         android:layout_height="0dp"
         android:text="@string/no_2"
         app:layout_constraintBottom_toTopOf="@id/button5"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button3"
         app:layout_constraintStart_toEndOf="@id/button1"
         app:layout_constraintTop_toTopOf="parent" />
@@ -110,7 +103,6 @@
         android:layout_height="0dp"
         android:text="@string/no_3"
         app:layout_constraintBottom_toTopOf="@id/button6"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button2"
         app:layout_constraintTop_toTopOf="parent" />
@@ -122,7 +114,6 @@
         android:layout_height="0dp"
         android:text="@string/no_0"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/buttonRemove"
         app:layout_constraintStart_toEndOf="@id/button_clear"
         app:layout_constraintTop_toBottomOf="@id/button8" />
@@ -132,10 +123,9 @@
         style="@style/Base.Widget.AppCompat.Button.Number"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/arithmatic_funcion_button"
+        android:background="@drawable/function_rectangle_button"
         android:text="@string/remove"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button0"
         app:layout_constraintTop_toBottomOf="@id/button9" />
@@ -145,10 +135,9 @@
         style="@style/Base.Widget.AppCompat.Button.Number"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/arithmatic_funcion_button"
+        android:background="@drawable/function_rectangle_button"
         android:text="@string/clear"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/button0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button7" />
