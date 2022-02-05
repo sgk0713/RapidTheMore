@@ -1,5 +1,6 @@
 package com.evangers.rapidthemore.ui.main
 
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -131,6 +132,11 @@ class HomeViewModel @Inject constructor(
 
     fun launchSpay() {
         state.update(HomeAction.LaunchSpay)
+        liveData.postValue(state)
+    }
+
+    fun navToIntent(intent: Intent) {
+        state.update(HomeAction.NavToIntent(intent))
         liveData.postValue(state)
     }
 }

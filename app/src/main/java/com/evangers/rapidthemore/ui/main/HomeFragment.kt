@@ -11,7 +11,9 @@ import com.evangers.rapidthemore.databinding.FragmentHomeBinding
 import com.evangers.rapidthemore.ui.base.ParentFragment
 import com.evangers.rapidthemore.ui.util.longToast
 import com.evangers.rapidthemore.ui.util.shortToast
-import com.google.android.gms.ads.*
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
 
@@ -114,6 +116,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.launchSpay?.getValueIfNotHandled()?.let {
                 launchSpay()
             }
+            state.intent?.getValueIfNotHandled()?.let {
+                navToIntent(it)
+            }
         })
     }
 
@@ -128,9 +133,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     private fun launchPayco() {
         val packageName = getString(R.string.payco_package)
         if (isAppInstalled(packageName)) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.payco_launcher)))
             viewModel.showPercentToast()
-            requireContext().startActivity(intent)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.payco_launcher)))
+            viewModel.navToIntent(intent)
         } else {
             viewModel.showToast(getString(R.string.no_payco_app))
         }
@@ -140,11 +145,17 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
         val packageName = getString(R.string.spay_package)
         if (isAppInstalled(packageName)) {
             val intent = requireContext().packageManager.getLaunchIntentForPackage(packageName)
-            viewModel.showPercentToast()
-            requireContext().startActivity(intent)
+            intent?.let {
+                viewModel.showPercentToast()
+                viewModel.navToIntent(it)
+            }
         } else {
             viewModel.showToast(getString(R.string.no_spay_app))
         }
+    }
+
+    private fun navToIntent(intent: Intent) {
+        requireContext().startActivity(intent)
     }
 
     private fun loadBanner() {

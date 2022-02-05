@@ -1,5 +1,6 @@
 package com.evangers.rapidthemore.ui.main
 
+import android.content.Intent
 import com.evangers.rapidthemore.ui.base.Event
 import java.math.BigDecimal
 
@@ -10,6 +11,7 @@ interface IHomeState {
     var longToastMessage: Event<String>?
     var launchPayco: Event<Unit>?
     var launchSpay: Event<Unit>?
+    var intent: Event<Intent>?
 }
 
 class HomeState constructor(
@@ -18,7 +20,8 @@ class HomeState constructor(
     override var toastMessage: Event<String>? = null,
     override var longToastMessage: Event<String>? = null,
     override var launchPayco: Event<Unit>? = null,
-    override var launchSpay: Event<Unit>? = null
+    override var launchSpay: Event<Unit>? = null,
+    override var intent: Event<Intent>? = null
 ) : IHomeState {
 
     fun update(action: HomeAction) {
@@ -44,6 +47,9 @@ class HomeState constructor(
             }
             HomeAction.LaunchSpay -> {
                 launchSpay = Event(Unit)
+            }
+            is HomeAction.NavToIntent -> {
+                intent = Event(action.intent)
             }
             is HomeAction.Error -> Unit
         }
