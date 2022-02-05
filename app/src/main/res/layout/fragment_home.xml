@@ -23,12 +23,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/textContainer"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="180dp"
         android:padding="40dp"
-        app:layout_constraintBottom_toTopOf="@id/guideLine"
+        app:layout_constraintBottom_toTopOf="@id/adBannerViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bannerWebView">
@@ -72,6 +73,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/resultTextView"
             tools:text="5,999" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/adBannerViewContainer"
+        android:layout_width="match_parent"
+        android:background="@color/button_border"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/guideLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textContainer">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="클릭하여 광고봐주기"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include

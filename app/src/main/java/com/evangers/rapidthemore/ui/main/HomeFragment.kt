@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.evangers.rapidthemore.R
 import com.evangers.rapidthemore.databinding.FragmentHomeBinding
@@ -14,6 +15,9 @@ import com.evangers.rapidthemore.ui.util.shortToast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
 
@@ -45,6 +49,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 adWidth
             )
         }
+    private var mRewardedAd: RewardedAd? = null
+    private var isRewardAdRequesting = false
+
 
     override fun bindView(view: View) {
         binding = FragmentHomeBinding.bind(view)
@@ -69,6 +76,11 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
+            adBannerViewContainer.setOnClickListener {
+                mRewardedAd?.show(requireActivity()) {
+                    adBannerViewContainer.isVisible = false
+                }
+            }
             adView = AdView(requireContext())
             adViewContainer.addView(adView)
             adViewContainer.viewTreeObserver.addOnGlobalLayoutListener {
@@ -87,6 +99,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             """.trimIndent()
             val html = "<div>$script</div>"
             bannerWebView.loadData(html, "text/html", "utf-8")
+            loadReward()
         }
     }
 
@@ -96,6 +109,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     override fun initBinding() {
         viewModel.liveData.observe(viewLifecycleOwner, { state ->
+            loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
                 val result = formatter.format(it)
@@ -165,6 +179,26 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             .Builder()
             .build()
         adView.loadAd(adRequest)
+    }
+
+    private fun loadReward() {
+        if (isRewardAdRequesting || mRewardedAd != null) return
+        isRewardAdRequesting = true
+        val adRequest = AdRequest.Builder().build()
+        RewardedAd.load(requireContext(),
+            getString(R.string.admob_reward_unit_id),
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    isRewardAdRequesting = false
+                    mRewardedAd = null
+                }
+
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    isRewardAdRequesting = false
+                    mRewardedAd = rewardedAd
+                }
+            })
     }
 
 }
