@@ -17,6 +17,7 @@
         android:id="@+id/bannerWebView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintVertical_chainStyle="spread_inside"
         app:layout_constraintBottom_toTopOf="@id/textContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
