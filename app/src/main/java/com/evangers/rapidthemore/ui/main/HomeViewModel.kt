@@ -32,6 +32,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun addDigitLast(digit: Int) {
+        if (state.isDigitAddable.not()) {
+            state.update(HomeAction.ShowToast("12자리 이상 추가할 수 없습니다."))
+            liveData.postValue(state)
+            return
+        }
         viewModelScope.launch {
             getDigitAddedFinalValue(GetDigitAddedFinalValue.Request(digit))
                 .map { result ->

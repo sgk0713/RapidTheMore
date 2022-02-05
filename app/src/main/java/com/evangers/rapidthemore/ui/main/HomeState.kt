@@ -24,6 +24,11 @@ class HomeState constructor(
     override var intent: Event<Intent>? = null
 ) : IHomeState {
 
+    val isDigitAddable: Boolean
+        get() {
+            return amount.getValue()?.toString()?.length ?: 0 < 12
+        }
+
     fun update(action: HomeAction) {
         when (action) {
             is HomeAction.UpdateRatio -> {
