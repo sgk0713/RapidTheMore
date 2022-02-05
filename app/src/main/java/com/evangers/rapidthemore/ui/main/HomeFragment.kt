@@ -38,7 +38,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
             val density = outMetrics.density
 
-            var adWidthPixels = binding.adViewContainer.width.toFloat()
+            var adWidthPixels = binding.adBottomBannerViewContainer.width.toFloat()
             if (adWidthPixels == 0f) {
                 adWidthPixels = outMetrics.widthPixels.toFloat()
             }
@@ -76,14 +76,14 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
-            adBannerViewContainer.setOnClickListener {
+            adRewardViewContainer.setOnClickListener {
                 mRewardedAd?.show(requireActivity()) {
-                    adBannerViewContainer.isVisible = false
+                    adRewardViewContainer.isVisible = false
                 }
             }
             adView = AdView(requireContext())
-            adViewContainer.addView(adView)
-            adViewContainer.viewTreeObserver.addOnGlobalLayoutListener {
+            adBottomBannerViewContainer.addView(adView)
+            adBottomBannerViewContainer.viewTreeObserver.addOnGlobalLayoutListener {
                 if (!initialLayoutComplete) {
                     initialLayoutComplete = true
                     loadBanner()

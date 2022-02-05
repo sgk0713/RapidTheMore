@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:padding="40dp"
-        app:layout_constraintBottom_toTopOf="@id/adBannerViewContainer"
+        app:layout_constraintBottom_toTopOf="@id/ad_reward_view_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bannerWebView">
@@ -77,7 +77,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/adBannerViewContainer"
+        android:id="@+id/ad_reward_view_container"
         android:layout_width="match_parent"
         android:background="@color/button_border"
         android:layout_height="0dp"
@@ -117,7 +117,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="4dp"
         android:text="@string/spay"
-        app:layout_constraintBottom_toTopOf="@id/adViewContainer"
+        app:layout_constraintBottom_toTopOf="@id/ad_bottom_banner_view_container"
         app:layout_constraintEnd_toStartOf="@id/paycoButton"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +136,7 @@
         app:layout_constraintTop_toTopOf="@id/launchSPay" />
 
     <FrameLayout
-        android:id="@+id/adViewContainer"
+        android:id="@+id/ad_bottom_banner_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
