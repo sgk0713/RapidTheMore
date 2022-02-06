@@ -1,4 +1,4 @@
-package com.evangers.rapidthemore
+package kr.evangers.rapidthemore
 
 import org.junit.Test
 

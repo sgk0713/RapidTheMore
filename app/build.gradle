@@ -21,7 +21,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.evangers.rapidthemore"
+        applicationId "kr.evangers.rapidthemore"
         minSdk 19
         targetSdk 31
         versionCode 4

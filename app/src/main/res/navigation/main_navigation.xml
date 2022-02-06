@@ -7,6 +7,6 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.evangers.rapidthemore.ui.main.HomeFragment"
+        android:name="kr.evangers.rapidthemore.ui.main.HomeFragment"
         tools:layout="@layout/fragment_home" />
 </navigation>
