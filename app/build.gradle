@@ -3,7 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services' //firebase
+    id 'com.google.gms.google-services' // firebase
+    id 'com.google.firebase.crashlytics' // crashlytics
+
 }
 
 kapt {
@@ -101,6 +103,9 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-ads:20.5.0' // admob
     implementation project(':nativetemplates') // admob
+
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.7'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.2'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
