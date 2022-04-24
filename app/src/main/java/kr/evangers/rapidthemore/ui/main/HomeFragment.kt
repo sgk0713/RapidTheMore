@@ -21,6 +21,7 @@ import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
 import kr.evangers.rapidthemore.ui.base.ParentFragment
 import kr.evangers.rapidthemore.ui.util.longToast
 import kr.evangers.rapidthemore.ui.util.shortToast
+import java.lang.RuntimeException
 import java.text.DecimalFormat
 
 @AndroidEntryPoint
@@ -79,9 +80,10 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
             adRewardViewContainer.setOnClickListener {
-                mRewardedAd?.show(requireActivity()) {
-                    adRewardViewContainer.isVisible = false
-                }
+                throw RuntimeException("Test")
+//                mRewardedAd?.show(requireActivity()) {
+//                    adRewardViewContainer.isVisible = false
+//                }
             }
             adView = AdView(requireContext())
             adBottomBannerViewContainer.addView(adView)
