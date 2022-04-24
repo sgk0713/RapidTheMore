@@ -54,11 +54,37 @@
             android:layout_height="wrap_content"
             android:text="0.0%"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/numberTextView"
+            app:layout_constraintBottom_toTopOf="@id/twiceResultTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1."
             app:layout_constraintStart_toEndOf="@id/resultText"
             app:layout_constraintTop_toTopOf="parent"
+            tools:text="16.65%" />
+
+        <TextView
+            android:id="@+id/twiceResultText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="더모아 2배 적립률"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/twiceResultTextView"
+            app:layout_constraintEnd_toStartOf="@id/twiceResultTextView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/twiceResultTextView" />
+
+        <TextView
+            android:id="@+id/twiceResultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0%"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/numberTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1."
+            app:layout_constraintStart_toEndOf="@id/twiceResultText"
+            app:layout_constraintTop_toBottomOf="@id/resultTextView"
             tools:text="16.65%" />
 
         <TextView
@@ -71,7 +97,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1."
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/resultTextView"
+            app:layout_constraintTop_toBottomOf="@id/twiceResultTextView"
             tools:text="5,999" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

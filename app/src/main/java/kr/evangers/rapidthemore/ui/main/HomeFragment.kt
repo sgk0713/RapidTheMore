@@ -117,6 +117,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             }
             state.ratio.getValueIfNotHandled()?.let {
                 binding.resultTextView.text = getString(R.string.percent_with_number, it.toString())
+                binding.twiceResultTextView.text = getString(R.string.percent_with_number, it.times(2f).toString())
             }
             state.toastMessage?.getValueIfNotHandled()?.let {
                 requireContext().shortToast(it)
