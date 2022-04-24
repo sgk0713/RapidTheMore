@@ -17,12 +17,24 @@
         android:id="@+id/bannerWebView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/textContainer"
+        app:layout_constraintBottom_toTopOf="@id/hintForLanding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
+    <TextView
+        android:id="@+id/hintForLanding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@android:drawable/arrow_up_float"
+        android:drawableEnd="@android:drawable/arrow_up_float"
+        android:drawableTint="@color/gnt_red"
+        android:text="쿠팡으로 이동하여 구매해주기ㅜ"
+        app:layout_constraintBottom_toTopOf="@id/textContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bannerWebView" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/textContainer"
@@ -32,7 +44,7 @@
         app:layout_constraintBottom_toTopOf="@id/ad_reward_view_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bannerWebView">
+        app:layout_constraintTop_toBottomOf="@id/hintForLanding">
 
 
         <TextView
@@ -85,7 +97,7 @@
             app:layout_constraintHorizontal_bias="1."
             app:layout_constraintStart_toEndOf="@id/twiceResultText"
             app:layout_constraintTop_toBottomOf="@id/resultTextView"
-            tools:text="16.65%" />
+            tools:text="33.3%" />
 
         <TextView
             android:id="@+id/numberTextView"
@@ -105,8 +117,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ad_reward_view_container"
         android:layout_width="match_parent"
-        android:background="@color/button_border"
         android:layout_height="0dp"
+        android:background="@color/button_border"
         app:layout_constraintBottom_toTopOf="@id/guideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

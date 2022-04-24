@@ -5,13 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import kr.evangers.rapidthemore.R
-import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
-import kr.evangers.rapidthemore.ui.base.ParentFragment
-import kr.evangers.rapidthemore.ui.util.longToast
-import kr.evangers.rapidthemore.ui.util.shortToast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -19,6 +16,11 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import kr.evangers.rapidthemore.R
+import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
+import kr.evangers.rapidthemore.ui.base.ParentFragment
+import kr.evangers.rapidthemore.ui.util.longToast
+import kr.evangers.rapidthemore.ui.util.shortToast
 import java.text.DecimalFormat
 
 @AndroidEntryPoint
@@ -99,6 +101,12 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             """.trimIndent()
             val html = "<div>$script</div>"
             bannerWebView.loadData(html, "text/html", "utf-8")
+            bannerWebView.webViewClient = object : WebViewClient() {
+                override fun onLoadResource(view: WebView?, url: String?) {
+                    hintForLanding.isVisible = view?.contentHeight ?: 0 > 0
+                    super.onLoadResource(view, url)
+                }
+            }
             loadReward()
         }
     }
@@ -117,7 +125,8 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             }
             state.ratio.getValueIfNotHandled()?.let {
                 binding.resultTextView.text = getString(R.string.percent_with_number, it.toString())
-                binding.twiceResultTextView.text = getString(R.string.percent_with_number, it.times(2f).toString())
+                binding.twiceResultTextView.text =
+                    getString(R.string.percent_with_number, it.times(2f).toString())
             }
             state.toastMessage?.getValueIfNotHandled()?.let {
                 requireContext().shortToast(it)
