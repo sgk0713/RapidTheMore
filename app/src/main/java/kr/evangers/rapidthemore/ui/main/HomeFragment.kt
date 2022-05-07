@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.gms.ads.AdRequest
@@ -102,6 +103,18 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             val html = "<div>$script</div>"
             bannerWebView.loadData(html, "text/html", "utf-8")
             bannerWebView.webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    return if (url?.startsWith("http") == true) {
+                        val intent = Intent(Intent.ACTION_VIEW, url?.toUri()).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        }
+                        requireActivity().startActivity(intent)
+                        true
+                    } else {
+                        super.shouldOverrideUrlLoading(view, url)
+                    }
+                }
+
                 override fun onLoadResource(view: WebView?, url: String?) {
                     hintForLanding.isVisible = view?.contentHeight ?: 0 > 0
                     super.onLoadResource(view, url)
