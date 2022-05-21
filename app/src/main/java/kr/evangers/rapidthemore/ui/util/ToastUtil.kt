@@ -6,21 +6,13 @@ import android.widget.Toast
 var toast: Toast? = null
 
 fun Context.shortToast(msg: String) {
-    if (toast == null) toast = Toast(this)
-    toast?.run {
-        cancel()
-        setText(msg)
-        duration = Toast.LENGTH_SHORT
-        show()
-    }
+    toast?.cancel()
+    toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT)
+    toast?.show()
 }
 
 fun Context.longToast(msg: String) {
-    if (toast == null) toast = Toast(this)
-    toast?.run {
-        cancel()
-        setText(msg)
-        duration = Toast.LENGTH_LONG
-        show()
-    }
+    toast?.cancel()
+    toast = Toast.makeText(this, msg, Toast.LENGTH_LONG)
+    toast?.show()
 }
