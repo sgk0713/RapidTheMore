@@ -101,11 +101,11 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
 
-    implementation 'com.google.android.gms:play-services-ads:20.6.0' // admob
+    implementation 'com.google.android.gms:play-services-ads:21.3.0' // admob
     implementation project(':nativetemplates') // admob
 
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.10'
-    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.2'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

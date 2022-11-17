@@ -210,7 +210,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     private fun loadBanner() {
         adView.adUnitId = getString(R.string.admob_home_banner_unit_id)
-        adView.adSize = adSize
+        adView.setAdSize(adSize)
         val adRequest = AdRequest
             .Builder()
             .build()
