@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:padding="40dp"
-        app:layout_constraintBottom_toTopOf="@id/ad_reward_view_container"
+        app:layout_constraintBottom_toTopOf="@id/adRewardViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hintForLanding">
@@ -115,7 +115,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ad_reward_view_container"
+        android:id="@+id/adRewardViewContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/button_border"
