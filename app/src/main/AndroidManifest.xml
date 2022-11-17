@@ -6,7 +6,7 @@
         <package android:name="com.samsung.android.spay" />
         <package android:name="com.nhnent.payapp" />
     </queries>
-
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <application
         android:name=".ui.base.BaseApp"
         android:allowBackup="true"
