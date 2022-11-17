@@ -129,7 +129,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
     override fun initBinding() {
-        viewModel.liveData.observe(viewLifecycleOwner, { state ->
+        viewModel.liveData.observe(viewLifecycleOwner) { state ->
             loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
@@ -156,7 +156,20 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.intent?.getValueIfNotHandled()?.let {
                 navToIntent(it)
             }
-        })
+            state.adid?.getValueIfNotHandled()?.let { adidValue ->
+                val adidKeyValue = "\"deviceId\": \"${adidValue}\""
+                val json = getString(R.string.coupang_json) + ",${adidKeyValue}"
+                val script = """
+                <script src ="https://ads-partners.coupang.com/g.js"></script>
+                <script>
+                new PartnersCoupang.G({
+                    $json
+                });</script>
+            """.trimIndent()
+                val html = "<div>$script</div>"
+                binding.bannerWebView.loadData(html, "text/html", "utf-8")
+            }
+        }
     }
 
     override fun onViewCreatedSg(view: View, savedInstanceState: Bundle?) {

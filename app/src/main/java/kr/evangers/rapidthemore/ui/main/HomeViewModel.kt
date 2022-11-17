@@ -4,14 +4,14 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kr.evangers.rapidthemore.domain.usecase.ClearAmount
-import kr.evangers.rapidthemore.domain.usecase.GetDigitAddedFinalValue
-import kr.evangers.rapidthemore.domain.usecase.GetTheMoreDiscountRatio
-import kr.evangers.rapidthemore.domain.usecase.RemoveLastDigit
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kr.evangers.rapidthemore.domain.usecase.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -20,7 +20,8 @@ class HomeViewModel @Inject constructor(
     private val getDigitAddedFinalValue: GetDigitAddedFinalValue,
     private val removeLastDigit: RemoveLastDigit,
     private val getTheMoreDiscountRatio: GetTheMoreDiscountRatio,
-    private val clearAmount: ClearAmount
+    private val clearAmount: ClearAmount,
+    private val getADID: GetADID,
 ) : ViewModel() {
 
     private val state = HomeState()
@@ -29,6 +30,27 @@ class HomeViewModel @Inject constructor(
 
     fun start() {
         clearNumber()
+        updateADID()
+    }
+
+    private fun updateADID() {
+        viewModelScope.launch {
+            getADID.invoke(Unit)
+                .flowOn(Dispatchers.IO)
+                .catch {
+                    // do nothing
+                }
+                .collect {
+                    when (it) {
+                        is GetADID.Response.Failure -> {
+                        }
+                        is GetADID.Response.Success -> {
+                            state.update(HomeAction.UpdateAdid(it.adid))
+                            liveData.postValue(state)
+                        }
+                    }
+                }
+        }
     }
 
     fun addDigitLast(digit: Int) {

@@ -8,6 +8,7 @@ sealed class HomeAction {
     object LaunchPayco : HomeAction()
     object LaunchSpay : HomeAction()
     class NavToIntent(val intent: Intent) : HomeAction()
+    class UpdateAdid(val adid: String) : HomeAction()
 
     class Error(t: Throwable) : HomeAction()
 

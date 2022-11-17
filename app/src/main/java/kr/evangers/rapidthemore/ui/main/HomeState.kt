@@ -5,13 +5,14 @@ import kr.evangers.rapidthemore.ui.base.Event
 import java.math.BigDecimal
 
 interface IHomeState {
-    var ratio: Event<Float>
-    var amount: Event<BigDecimal>
-    var toastMessage: Event<String>?
-    var longToastMessage: Event<String>?
-    var launchPayco: Event<Unit>?
-    var launchSpay: Event<Unit>?
-    var intent: Event<Intent>?
+    val ratio: Event<Float>
+    val amount: Event<BigDecimal>
+    val toastMessage: Event<String>?
+    val longToastMessage: Event<String>?
+    val launchPayco: Event<Unit>?
+    val launchSpay: Event<Unit>?
+    val intent: Event<Intent>?
+    val adid: Event<String>?
 }
 
 class HomeState constructor(
@@ -21,7 +22,8 @@ class HomeState constructor(
     override var longToastMessage: Event<String>? = null,
     override var launchPayco: Event<Unit>? = null,
     override var launchSpay: Event<Unit>? = null,
-    override var intent: Event<Intent>? = null
+    override var intent: Event<Intent>? = null,
+    override var adid: Event<String>? = null,
 ) : IHomeState {
 
     val isDigitAddable: Boolean
@@ -57,6 +59,9 @@ class HomeState constructor(
                 intent = Event(action.intent)
             }
             is HomeAction.Error -> Unit
+            is HomeAction.UpdateAdid -> {
+                adid = Event(action.adid)
+            }
         }
     }
 }
