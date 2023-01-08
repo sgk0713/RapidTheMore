@@ -5,6 +5,7 @@
     <queries>
         <package android:name="com.samsung.android.spay" />
         <package android:name="com.nhnent.payapp" />
+        <package android:name="com.kbcard.cxh.appcard" />
     </queries>
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <application

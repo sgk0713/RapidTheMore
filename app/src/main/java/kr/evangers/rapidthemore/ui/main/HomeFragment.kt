@@ -59,6 +59,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
         with(binding) {
             paycoButton.setOnClickListener { viewModel.launchPayco() }
             launchSPay.setOnClickListener { viewModel.launchSpay() }
+            launchKbpay.setOnClickListener { viewModel.launchKbpay() }
             with(numberButtons) {
                 button0.setOnClickListener { viewModel.addDigitLast(0) }
                 button1.setOnClickListener { viewModel.addDigitLast(1) }
@@ -140,6 +141,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.launchSpay?.getValueIfNotHandled()?.let {
                 launchSpay()
             }
+            state.launchKbpay?.getValueIfNotHandled()?.let {
+                launchKbpay()
+            }
             state.intent?.getValueIfNotHandled()?.let {
                 navToIntent(it)
             }
@@ -188,6 +192,19 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             }
         } else {
             viewModel.showToast(getString(R.string.no_spay_app))
+        }
+    }
+
+    private fun launchKbpay() {
+        val packageName = getString(R.string.kbpay_package)
+        if (isAppInstalled(packageName)) {
+            val intent = requireContext().packageManager.getLaunchIntentForPackage(packageName)
+            intent?.let {
+                viewModel.showPercentToast()
+                viewModel.navToIntent(it)
+            }
+        } else {
+            viewModel.showToast(getString(R.string.no_kbpay_app))
         }
     }
 

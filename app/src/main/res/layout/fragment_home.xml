@@ -128,26 +128,41 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/launchSPay"
         style="@style/Base.Widget.AppCompat.Button.Launch"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="4dp"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
         android:text="@string/spay"
         app:layout_constraintBottom_toTopOf="@id/ad_bottom_banner_view_container"
-        app:layout_constraintEnd_toStartOf="@id/paycoButton"
+        app:layout_constraintEnd_toStartOf="@id/launchKbpay"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numberButtons" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/launchKbpay"
+        style="@style/Base.Widget.AppCompat.Button.Launch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
+        android:text="@string/kbpay"
+        app:layout_constraintBottom_toBottomOf="@id/launchSPay"
+        app:layout_constraintEnd_toStartOf="@id/paycoButton"
+        app:layout_constraintStart_toEndOf="@id/launchSPay"
+        app:layout_constraintTop_toTopOf="@id/launchSPay" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/paycoButton"
         style="@style/Base.Widget.AppCompat.Button.Launch"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="4dp"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
         android:text="@string/launch_payco_samsungpay"
         app:layout_constraintBottom_toBottomOf="@id/launchSPay"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/launchSPay"
+        app:layout_constraintStart_toEndOf="@id/launchKbpay"
         app:layout_constraintTop_toTopOf="@id/launchSPay" />
 
     <FrameLayout
@@ -158,6 +173,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/launchSPay" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

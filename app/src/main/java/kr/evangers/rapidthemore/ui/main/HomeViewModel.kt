@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -159,6 +158,11 @@ class HomeViewModel @Inject constructor(
 
     fun launchSpay() {
         state.update(HomeAction.LaunchSpay)
+        liveData.postValue(state)
+    }
+
+    fun launchKbpay() {
+        state.update(HomeAction.LaunchKbpay)
         liveData.postValue(state)
     }
 

@@ -7,6 +7,7 @@ sealed class HomeAction {
     object ClearDigits : HomeAction()
     object LaunchPayco : HomeAction()
     object LaunchSpay : HomeAction()
+    object LaunchKbpay : HomeAction()
     class NavToIntent(val intent: Intent) : HomeAction()
     class UpdateAdid(val adid: String) : HomeAction()
 

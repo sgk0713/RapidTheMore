@@ -11,6 +11,7 @@ interface IHomeState {
     val longToastMessage: Event<String>?
     val launchPayco: Event<Unit>?
     val launchSpay: Event<Unit>?
+    val launchKbpay: Event<Unit>?
     val intent: Event<Intent>?
     val adid: Event<String>?
 }
@@ -22,6 +23,7 @@ class HomeState constructor(
     override var longToastMessage: Event<String>? = null,
     override var launchPayco: Event<Unit>? = null,
     override var launchSpay: Event<Unit>? = null,
+    override var launchKbpay: Event<Unit>? = null,
     override var intent: Event<Intent>? = null,
     override var adid: Event<String>? = null,
 ) : IHomeState {
@@ -54,6 +56,9 @@ class HomeState constructor(
             }
             HomeAction.LaunchSpay -> {
                 launchSpay = Event(Unit)
+            }
+            HomeAction.LaunchKbpay -> {
+                launchKbpay = Event(Unit)
             }
             is HomeAction.NavToIntent -> {
                 intent = Event(action.intent)
