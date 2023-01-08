@@ -106,7 +106,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 }
 
                 override fun onLoadResource(view: WebView?, url: String?) {
-                    hintForLanding.isVisible = view?.contentHeight ?: 0 > 0
+                    hintForLanding.isVisible = (view?.contentHeight ?: 0) > 0
                     super.onLoadResource(view, url)
                 }
             }
