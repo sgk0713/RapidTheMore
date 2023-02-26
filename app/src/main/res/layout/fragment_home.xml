@@ -2,19 +2,176 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.HomeFragment">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <WebView
+        android:id="@+id/bannerWebView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/hintForLanding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
     <TextView
-        android:id="@+id/message"
+        android:id="@+id/hintForLanding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home"
+        android:drawableStart="@android:drawable/arrow_up_float"
+        android:drawableEnd="@android:drawable/arrow_up_float"
+        android:drawableTint="@color/gnt_red"
+        android:text="쿠팡으로 이동하여 구매해주기ㅜ"
+        app:layout_constraintBottom_toTopOf="@id/textContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bannerWebView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="40dp"
+        app:layout_constraintBottom_toTopOf="@id/numberButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hintForLanding">
+
+
+        <TextView
+            android:id="@+id/resultText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="더모아 적립률"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/resultTextView"
+            app:layout_constraintEnd_toStartOf="@id/resultTextView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/resultTextView" />
+
+        <TextView
+            android:id="@+id/resultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0%"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/twiceResultTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1."
+            app:layout_constraintStart_toEndOf="@id/resultText"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="16.65%" />
+
+        <TextView
+            android:id="@+id/twiceResultText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="더모아 2배 적립률"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/twiceResultTextView"
+            app:layout_constraintEnd_toStartOf="@id/twiceResultTextView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/twiceResultTextView" />
+
+        <TextView
+            android:id="@+id/twiceResultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0%"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/numberTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1."
+            app:layout_constraintStart_toEndOf="@id/twiceResultText"
+            app:layout_constraintTop_toBottomOf="@id/resultTextView"
+            tools:text="33.3%" />
+
+        <TextView
+            android:id="@+id/numberTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1."
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twiceResultTextView"
+            tools:text="5,999" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/numberButtons"
+        layout="@layout/layout_number_buttons"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/launchSPay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideLine" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/launchSPay"
+        style="@style/Base.Widget.AppCompat.Button.Launch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
+        android:text="@string/spay"
+        app:layout_constraintBottom_toTopOf="@id/ad_bottom_banner_view_container"
+        app:layout_constraintEnd_toStartOf="@id/launchKbpay"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numberButtons" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/launchKbpay"
+        style="@style/Base.Widget.AppCompat.Button.Launch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
+        android:text="@string/kbpay"
+        app:layout_constraintBottom_toBottomOf="@id/launchSPay"
+        app:layout_constraintEnd_toStartOf="@id/paycoButton"
+        app:layout_constraintStart_toEndOf="@id/launchSPay"
+        app:layout_constraintTop_toTopOf="@id/launchSPay" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/paycoButton"
+        style="@style/Base.Widget.AppCompat.Button.Launch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="16dp"
+        android:text="@string/launch_payco_samsungpay"
+        app:layout_constraintBottom_toBottomOf="@id/launchSPay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/launchKbpay"
+        app:layout_constraintTop_toTopOf="@id/launchSPay" />
+
+    <FrameLayout
+        android:id="@+id/ad_bottom_banner_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/launchSPay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

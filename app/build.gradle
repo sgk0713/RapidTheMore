@@ -3,29 +3,63 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services' // firebase
+    id 'com.google.firebase.crashlytics' // crashlytics
+
 }
 
 kapt {
     correctErrorTypes = true
 }
 
+
+def keystorePropertiesFile = rootProject.file(".gradle/signing.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.evangers.rapidthemore"
-        minSdk 16
+        applicationId "kr.evangers.rapidthemore"
+        minSdk 19
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 8
+        versionName "1.2.0.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs { //keystore 정보
+        release {
+            storeFile new File(System.properties['user.home'], keystoreProperties['RELEASE_STORE_FILE'])
+            storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+            keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+            keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions 'app'
+
+    productFlavors {
+        production {
+            dimension 'app'
+        }
+        qa {
+            dimension 'app'
+            applicationIdSuffix '.test'
         }
     }
 
@@ -40,6 +74,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    setProperty("archivesBaseName", "v${defaultConfig.versionName}(${defaultConfig.versionCode})")
 }
 
 dependencies {
@@ -64,7 +99,14 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.38.1")
     kapt("com.google.dagger:hilt-android-compiler:2.38.1")
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+    implementation 'com.google.android.gms:play-services-ads:21.4.0' // admob
+    implementation project(':nativetemplates') // admob
+
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

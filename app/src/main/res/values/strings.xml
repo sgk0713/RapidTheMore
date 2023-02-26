@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">RapidTheMore</string>
+    <string name="app_name">더모아 빠른결제</string>
+
+    <string name="no_0">0</string>
+    <string name="no_1">1</string>
+    <string name="no_2">2</string>
+    <string name="no_3">3</string>
+    <string name="no_4">4</string>
+    <string name="no_5">5</string>
+    <string name="no_6">6</string>
+    <string name="no_7">7</string>
+    <string name="no_8">8</string>
+    <string name="no_9">9</string>
+    <string name="clear">C</string>
+    <string name="remove">del</string>
+    <string name="spay">삼성페이</string>
+    <string name="kbpay">KB Pay</string>
+    <string name="launch_payco_samsungpay">페이코</string>
+    <string name="no_payco_app">페이코 앱이 없습니다.</string>
+    <string name="no_kbpay_app">KB Pay 앱이 없습니다.</string>
+    <string name="no_spay_app">삼성페이 앱이 없습니다.</string>
+    <string name="percent_with_number">%1$s%%</string>
 </resources>
