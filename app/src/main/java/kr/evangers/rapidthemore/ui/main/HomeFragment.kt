@@ -14,22 +14,26 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
 import kr.evangers.rapidthemore.ui.base.ParentFragment
+import kr.evangers.rapidthemore.ui.util.AppOpenAdManager
 import kr.evangers.rapidthemore.ui.util.longToast
 import kr.evangers.rapidthemore.ui.util.shortToast
 import java.text.DecimalFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
-
     private lateinit var binding: FragmentHomeBinding
+
+    @Inject
+    lateinit var appOpenAdManager: AppOpenAdManager
 
     private lateinit var adView: AdView
     private var initialLayoutComplete = false
@@ -52,7 +56,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 adWidth
             )
         }
-    private var mRewardedAd: RewardedAd? = null
+    private var mRewardedAd: RewardedInterstitialAd? = null
     private var isRewardAdRequesting = false
 
 
@@ -81,9 +85,17 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
             adRewardViewContainer.setOnClickListener {
-                mRewardedAd?.show(requireActivity()) {
-                    adRewardViewContainer.isVisible = false
+                if (mRewardedAd != null && appOpenAdManager.isShowingAd.not()) {
+                    appOpenAdManager.isShowingAd = true
+                    appOpenAdManager.loadAd(requireContext())
+                    mRewardedAd?.show(requireActivity()) {
+                        mRewardedAd = null
+                        loadReward()
+                        appOpenAdManager.isShowingAd = false
+                    }
                 }
+
+
             }
             adView = AdView(requireContext())
             adBottomBannerViewContainer.addView(adView)
@@ -238,18 +250,20 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
         if (isRewardAdRequesting || mRewardedAd != null) return
         isRewardAdRequesting = true
         val adRequest = AdRequest.Builder().build()
-        RewardedAd.load(requireContext(),
+        RewardedInterstitialAd.load(requireContext(),
             getString(R.string.admob_reward_unit_id),
             adRequest,
-            object : RewardedAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
+            object : RewardedInterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    super.onAdFailedToLoad(p0)
                     isRewardAdRequesting = false
                     mRewardedAd = null
                 }
 
-                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                override fun onAdLoaded(p0: RewardedInterstitialAd) {
+                    super.onAdLoaded(p0)
                     isRewardAdRequesting = false
-                    mRewardedAd = rewardedAd
+                    mRewardedAd = p0
                 }
             })
     }

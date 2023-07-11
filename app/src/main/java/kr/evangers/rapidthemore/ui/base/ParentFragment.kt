@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 abstract class ParentFragment constructor(
-    @LayoutRes layoutRes: Int
+    @LayoutRes layoutRes: Int,
 ) : Fragment(layoutRes) {
 
     @Deprecated(
@@ -20,7 +18,7 @@ abstract class ParentFragment constructor(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             onPostCreateView(savedInstanceState)
