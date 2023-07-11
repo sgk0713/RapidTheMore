@@ -18,14 +18,14 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "kr.evangers.rapidthemore"
         minSdk 19
-        targetSdk 31
-        versionCode 8
-        versionName "1.2.0.0"
+        targetSdk 33
+        versionCode 9
+        versionName "1.3.0.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -75,15 +75,16 @@ android {
         jvmTarget = '1.8'
     }
     setProperty("archivesBaseName", "v${defaultConfig.versionName}(${defaultConfig.versionCode})")
+    namespace 'kr.evangers.rapidthemore'
 }
 
 dependencies {
 
 
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.9.0'
 
     implementation(
-            "androidx.core:core-ktx:$core_version",
+            "androidx.core:core-ktx:1.10.1",
             "androidx.navigation:navigation-fragment-ktx:$nav_version",
             "androidx.navigation:navigation-ui-ktx:$nav_version",
             "androidx.fragment:fragment-ktx:$fragment_version",
@@ -96,19 +97,19 @@ dependencies {
             "androidx.constraintlayout:constraintlayout:$constraint_version"
     )
 
-    implementation("com.google.dagger:hilt-android:2.38.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.38.1")
+    implementation('com.google.dagger:hilt-android:2.46.1')
+    kapt('com.google.dagger:hilt-android-compiler:2.46.1')
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
 
-    implementation 'com.google.android.gms:play-services-ads:21.4.0' // admob
+    implementation 'com.google.android.gms:play-services-ads:22.2.0' // admob
     implementation project(':nativetemplates') // admob
 
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

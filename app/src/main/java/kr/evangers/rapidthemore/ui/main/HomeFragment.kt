@@ -10,23 +10,27 @@ import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
 import kr.evangers.rapidthemore.ui.base.ParentFragment
+import kr.evangers.rapidthemore.ui.util.AppOpenAdManager
 import kr.evangers.rapidthemore.ui.util.longToast
 import kr.evangers.rapidthemore.ui.util.shortToast
 import java.text.DecimalFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
-
     private lateinit var binding: FragmentHomeBinding
+
+    @Inject
+    lateinit var appOpenAdManager: AppOpenAdManager
 
     private lateinit var adView: AdView
     private var initialLayoutComplete = false
@@ -49,6 +53,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 adWidth
             )
         }
+    private var mRewardedAd: RewardedInterstitialAd? = null
+    private var isRewardAdRequesting = false
+
 
     override fun bindView(view: View) {
         binding = FragmentHomeBinding.bind(view)
@@ -73,6 +80,32 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 button9.setOnClickListener { viewModel.addDigitLast(9) }
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
+            }
+            adRewardViewContainer.setOnClickListener {
+                if (mRewardedAd != null && appOpenAdManager.isShowingAd.not()) {
+                    appOpenAdManager.isShowingAd = true
+                    mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+
+                        override fun onAdDismissedFullScreenContent() {
+                            mRewardedAd = null
+                            appOpenAdManager.isShowingAd = false
+                            loadReward()
+                        }
+
+                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                            mRewardedAd = null
+                            appOpenAdManager.isShowingAd = false
+                            loadReward()
+                        }
+
+                        override fun onAdShowedFullScreenContent() {
+                        }
+                    }
+                    mRewardedAd?.show(requireActivity()) {
+                    }
+                }
+
+
             }
             adView = AdView(requireContext())
             adBottomBannerViewContainer.addView(adView)
@@ -110,6 +143,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                     super.onLoadResource(view, url)
                 }
             }
+            loadReward()
         }
     }
 
@@ -119,6 +153,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     override fun initBinding() {
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
+            loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
                 val result = formatter.format(it)
@@ -219,6 +254,28 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             .Builder()
             .build()
         adView.loadAd(adRequest)
+    }
+
+    private fun loadReward() {
+        if (isRewardAdRequesting || mRewardedAd != null) return
+        isRewardAdRequesting = true
+        val adRequest = AdRequest.Builder().build()
+        RewardedInterstitialAd.load(requireContext(),
+            getString(R.string.admob_reward_unit_id),
+            adRequest,
+            object : RewardedInterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    super.onAdFailedToLoad(p0)
+                    isRewardAdRequesting = false
+                    mRewardedAd = null
+                }
+
+                override fun onAdLoaded(p0: RewardedInterstitialAd) {
+                    super.onAdLoaded(p0)
+                    isRewardAdRequesting = false
+                    mRewardedAd = p0
+                }
+            })
     }
 
 }
