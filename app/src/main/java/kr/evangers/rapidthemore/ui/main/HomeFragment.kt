@@ -10,10 +10,7 @@ import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,11 +84,24 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             adRewardViewContainer.setOnClickListener {
                 if (mRewardedAd != null && appOpenAdManager.isShowingAd.not()) {
                     appOpenAdManager.isShowingAd = true
-                    appOpenAdManager.loadAd(requireContext())
+                    mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+
+                        override fun onAdDismissedFullScreenContent() {
+                            mRewardedAd = null
+                            appOpenAdManager.isShowingAd = false
+                            loadReward()
+                        }
+
+                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                            mRewardedAd = null
+                            appOpenAdManager.isShowingAd = false
+                            loadReward()
+                        }
+
+                        override fun onAdShowedFullScreenContent() {
+                        }
+                    }
                     mRewardedAd?.show(requireActivity()) {
-                        mRewardedAd = null
-                        loadReward()
-                        appOpenAdManager.isShowingAd = false
                     }
                 }
 
