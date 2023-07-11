@@ -13,6 +13,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
@@ -49,6 +52,9 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 adWidth
             )
         }
+    private var mRewardedAd: RewardedAd? = null
+    private var isRewardAdRequesting = false
+
 
     override fun bindView(view: View) {
         binding = FragmentHomeBinding.bind(view)
@@ -73,6 +79,11 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 button9.setOnClickListener { viewModel.addDigitLast(9) }
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
+            }
+            adRewardViewContainer.setOnClickListener {
+                mRewardedAd?.show(requireActivity()) {
+                    adRewardViewContainer.isVisible = false
+                }
             }
             adView = AdView(requireContext())
             adBottomBannerViewContainer.addView(adView)
@@ -110,6 +121,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                     super.onLoadResource(view, url)
                 }
             }
+            loadReward()
         }
     }
 
@@ -119,6 +131,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     override fun initBinding() {
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
+            loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
                 val result = formatter.format(it)
@@ -219,6 +232,26 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             .Builder()
             .build()
         adView.loadAd(adRequest)
+    }
+
+    private fun loadReward() {
+        if (isRewardAdRequesting || mRewardedAd != null) return
+        isRewardAdRequesting = true
+        val adRequest = AdRequest.Builder().build()
+        RewardedAd.load(requireContext(),
+            getString(R.string.admob_reward_unit_id),
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    isRewardAdRequesting = false
+                    mRewardedAd = null
+                }
+
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    isRewardAdRequesting = false
+                    mRewardedAd = rewardedAd
+                }
+            })
     }
 
 }

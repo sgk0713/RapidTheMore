@@ -13,11 +13,9 @@
     <string name="no_9">9</string>
     <string name="clear">C</string>
     <string name="remove">del</string>
-    <string name="spay">삼성페이</string>
-    <string name="kbpay">KB Pay</string>
-    <string name="launch_payco_samsungpay">페이코</string>
+    <string name="spay">삼성페이 실행</string>
+    <string name="launch_payco_samsungpay">페이코 실행</string>
     <string name="no_payco_app">페이코 앱이 없습니다.</string>
-    <string name="no_kbpay_app">KB Pay 앱이 없습니다.</string>
     <string name="no_spay_app">삼성페이 앱이 없습니다.</string>
     <string name="percent_with_number">%1$s%%</string>
 </resources>
