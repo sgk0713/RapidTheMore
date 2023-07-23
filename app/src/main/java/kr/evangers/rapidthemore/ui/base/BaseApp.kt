@@ -3,6 +3,7 @@ package kr.evangers.rapidthemore.ui.base
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleObserver
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.HiltAndroidApp
@@ -19,6 +20,7 @@ class BaseApp : Application(), Application.ActivityLifecycleCallbacks, Lifecycle
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         MobileAds.initialize(this)
         appOpenAdManager.loadAd(this)
         registerActivityLifecycleCallbacks(this)
