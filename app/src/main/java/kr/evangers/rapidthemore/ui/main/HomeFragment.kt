@@ -99,6 +99,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                         }
 
                         override fun onAdShowedFullScreenContent() {
+                            adRewardViewContainer.isVisible = false
                         }
                     }
                     mRewardedAd?.show(requireActivity()) {
@@ -139,7 +140,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 }
 
                 override fun onLoadResource(view: WebView?, url: String?) {
-                    hintForLanding.isVisible = (view?.contentHeight ?: 0) > 0
                     super.onLoadResource(view, url)
                 }
             }
@@ -257,7 +257,10 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
     private fun loadReward() {
-        if (isRewardAdRequesting || mRewardedAd != null) return
+        if (isRewardAdRequesting || mRewardedAd != null) {
+            binding.adRewardViewContainer.isVisible = false
+            return
+        }
         isRewardAdRequesting = true
         val adRequest = AdRequest.Builder().build()
         RewardedInterstitialAd.load(requireContext(),
@@ -272,6 +275,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
                 override fun onAdLoaded(p0: RewardedInterstitialAd) {
                     super.onAdLoaded(p0)
+                    binding.adRewardViewContainer.isVisible = true
                     isRewardAdRequesting = false
                     mRewardedAd = p0
                 }
