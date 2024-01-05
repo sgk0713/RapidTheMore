@@ -20,4 +20,6 @@
     <string name="no_kbpay_app">KB Pay 앱이 없습니다.</string>
     <string name="no_spay_app">삼성페이 앱이 없습니다.</string>
     <string name="percent_with_number">%1$s%%</string>
+    <string name="ad_description">(AD) 결과 화면 넓히기</string>
+    <string name="ad_loading">(AD) Loading..</string>
 </resources>

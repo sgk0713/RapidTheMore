@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -89,7 +90,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                         override fun onAdDismissedFullScreenContent() {
                             mRewardedAd = null
                             appOpenAdManager.isShowingAd = false
-                            loadReward()
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -103,6 +103,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                         }
                     }
                     mRewardedAd?.show(requireActivity()) {
+                        viewModel.onUserRewarded(it.type, it.amount)
                     }
                 }
 
@@ -153,7 +154,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     override fun initBinding() {
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
-            loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
                 val result = formatter.format(it)
@@ -261,6 +261,13 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             binding.adRewardViewContainer.isVisible = false
             return
         }
+        binding.adRewardViewContainer.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.button_border
+            )
+        )
+        binding.rewardAdText.text = getString(R.string.ad_loading)
         isRewardAdRequesting = true
         val adRequest = AdRequest.Builder().build()
         RewardedInterstitialAd.load(requireContext(),
@@ -276,6 +283,13 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 override fun onAdLoaded(p0: RewardedInterstitialAd) {
                     super.onAdLoaded(p0)
                     binding.adRewardViewContainer.isVisible = true
+                    binding.adRewardViewContainer.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.ad_enabled
+                        )
+                    )
+                    binding.rewardAdText.text = getString(R.string.ad_description)
                     isRewardAdRequesting = false
                     mRewardedAd = p0
                 }

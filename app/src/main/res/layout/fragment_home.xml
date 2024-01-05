@@ -100,17 +100,18 @@
         android:id="@+id/adRewardViewContainer"
         android:layout_width="match_parent"
         android:layout_height="54dp"
-        android:background="#A6F690"
+        android:background="@color/button_border"
         app:layout_constraintBottom_toTopOf="@id/numberButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textContainer">
 
         <TextView
+            android:id="@+id/rewardAdText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="클릭하여 광고봐주기"
+            android:text="@string/ad_loading"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -125,6 +126,7 @@
         layout="@layout/layout_number_buttons"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintHeight_max="400dp"
         app:layout_constraintBottom_toTopOf="@id/buttonsContainer"
         app:layout_constraintDimensionRatio="5:4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -186,7 +188,7 @@
     <WebView
         android:id="@+id/bannerWebView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
