@@ -18,12 +18,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "kr.evangers.rapidthemore"
         minSdk 19
-        targetSdk 33
+        targetSdk 34
         versionCode 10
         versionName "1.4.0.0"
         multiDexEnabled true
