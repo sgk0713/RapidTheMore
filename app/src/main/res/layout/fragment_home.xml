@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".ui.main.HomeFragment">
 
     <FrameLayout
@@ -126,10 +128,10 @@
         layout="@layout/layout_number_buttons"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_max="400dp"
         app:layout_constraintBottom_toTopOf="@id/buttonsContainer"
         app:layout_constraintDimensionRatio="5:4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="400dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/adRewardViewContainer" />
 
@@ -138,6 +140,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toTopOf="@id/bannerWebView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -149,7 +153,7 @@
             style="@style/Base.Widget.AppCompat.Button.Launch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="4dp"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="16dp"
             android:text="@string/spay"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -163,22 +167,22 @@
             style="@style/Base.Widget.AppCompat.Button.Launch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="4dp"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="16dp"
             android:text="@string/kbpay"
             app:layout_constraintBottom_toBottomOf="@id/launchSPay"
-            app:layout_constraintEnd_toStartOf="@id/paycoButton"
+            app:layout_constraintEnd_toStartOf="@id/naverPayButton"
             app:layout_constraintStart_toEndOf="@id/launchSPay"
             app:layout_constraintTop_toTopOf="@id/launchSPay" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/paycoButton"
-            style="@style/Base.Widget.AppCompat.Button.Launch"
+            android:id="@+id/naverPayButton"
+            style="@style/Base.Widget.AppCompat.Button.LaunchNaver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="4dp"
+            android:paddingHorizontal="12dp"
             android:paddingVertical="16dp"
-            android:text="@string/launch_payco_samsungpay"
+            android:text="@string/launch_naver_samsungpay"
             app:layout_constraintBottom_toBottomOf="@id/launchSPay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/launchKbpay"

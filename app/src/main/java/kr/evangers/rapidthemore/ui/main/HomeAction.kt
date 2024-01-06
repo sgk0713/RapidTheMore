@@ -5,7 +5,7 @@ import java.math.BigDecimal
 
 sealed class HomeAction {
     object ClearDigits : HomeAction()
-    object LaunchPayco : HomeAction()
+    object LaunchNaverPay : HomeAction()
     object LaunchSpay : HomeAction()
     object LaunchKbpay : HomeAction()
     class NavToIntent(val intent: Intent) : HomeAction()

@@ -65,7 +65,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     override fun initUi() {
         initialLayoutComplete = false
         with(binding) {
-            paycoButton.setOnClickListener { viewModel.launchPayco() }
+            naverPayButton.setOnClickListener { viewModel.launchNaverPay() }
             launchSPay.setOnClickListener { viewModel.launchSpay() }
             launchKbpay.setOnClickListener { viewModel.launchKbpay() }
             with(numberButtons) {
@@ -170,8 +170,8 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.longToastMessage?.getValueIfNotHandled()?.let {
                 requireContext().longToast(it)
             }
-            state.launchPayco?.getValueIfNotHandled()?.let {
-                launchPayco()
+            state.launchNaverPay?.getValueIfNotHandled()?.let {
+                launchNaverPay()
             }
             state.launchSpay?.getValueIfNotHandled()?.let {
                 launchSpay()
@@ -206,14 +206,26 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
 
-    private fun launchPayco() {
-        val packageName = getString(R.string.payco_package)
+    private fun launchNaverPay() {
+        val packageName = getString(R.string.naverpay_package)
         if (isAppInstalled(packageName)) {
             viewModel.showPercentToast()
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.payco_launcher)))
+            val uri = Uri.Builder()
+                .scheme(getString(R.string.naverpay_schme))
+                .authority(getString(R.string.naverpay_host))
+                .appendQueryParameter(
+                    getString(R.string.naverpay_key_1),
+                    getString(R.string.naverpay_value_1)
+                )
+                .appendQueryParameter(
+                    getString(R.string.naverpay_key_2),
+                    getString(R.string.naverpay_value_2)
+                )
+                .build()
+            val intent = Intent(Intent.ACTION_VIEW, uri)
             viewModel.navToIntent(intent)
         } else {
-            viewModel.showToast(getString(R.string.no_payco_app))
+            viewModel.showToast(getString(R.string.no_naver_app))
         }
     }
 

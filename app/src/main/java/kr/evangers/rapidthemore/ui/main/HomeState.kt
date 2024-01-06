@@ -9,7 +9,7 @@ interface IHomeState {
     val amount: Event<BigDecimal>
     val toastMessage: Event<String>?
     val longToastMessage: Event<String>?
-    val launchPayco: Event<Unit>?
+    val launchNaverPay: Event<Unit>?
     val launchSpay: Event<Unit>?
     val launchKbpay: Event<Unit>?
     val intent: Event<Intent>?
@@ -21,7 +21,7 @@ class HomeState constructor(
     override var amount: Event<BigDecimal> = Event(BigDecimal(0)),
     override var toastMessage: Event<String>? = null,
     override var longToastMessage: Event<String>? = null,
-    override var launchPayco: Event<Unit>? = null,
+    override var launchNaverPay: Event<Unit>? = null,
     override var launchSpay: Event<Unit>? = null,
     override var launchKbpay: Event<Unit>? = null,
     override var intent: Event<Intent>? = null,
@@ -51,8 +51,8 @@ class HomeState constructor(
             is HomeAction.ShowLongToast -> {
                 longToastMessage = Event(action.msg)
             }
-            HomeAction.LaunchPayco -> {
-                launchPayco = Event(Unit)
+            HomeAction.LaunchNaverPay -> {
+                launchNaverPay = Event(Unit)
             }
             HomeAction.LaunchSpay -> {
                 launchSpay = Event(Unit)

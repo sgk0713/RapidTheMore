@@ -31,4 +31,10 @@
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textSize">@dimen/launch_text</item>
     </style>
+
+    <style name="Base.Widget.AppCompat.Button.LaunchNaver" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/function_button_naver</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:textSize">@dimen/launch_text</item>
+    </style>
 </resources>

@@ -161,13 +161,13 @@ class HomeViewModel @Inject constructor(
         liveData.postValue(state)
     }
 
-    fun launchPayco() {
+    fun launchNaverPay() {
         firebaseEventLogger.logEvent(
             click_launchpay, mapOf(
-                param_app to payco
+                param_app to naverpay
             )
         )
-        state.update(HomeAction.LaunchPayco)
+        state.update(HomeAction.LaunchNaverPay)
         liveData.postValue(state)
     }
 
