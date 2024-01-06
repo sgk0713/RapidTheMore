@@ -12,9 +12,7 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class BaseApp : Application(), Application.ActivityLifecycleCallbacks, LifecycleObserver {
-
-    private var currentActivity: Activity? = null
-
+    
     @Inject
     lateinit var appOpenAdManager: AppOpenAdManager
 
@@ -28,21 +26,15 @@ class BaseApp : Application(), Application.ActivityLifecycleCallbacks, Lifecycle
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
 
-    override fun onActivityStarted(activity: Activity) {
-        // Updating the currentActivity only when an ad is not showing.
-        if (appOpenAdManager.isShowingAd.not()) {
-            currentActivity = activity
-            currentActivity?.let {
-                appOpenAdManager.showAdIfAvailable(it, object : OnShowAdCompleteListener {
-                    override fun onShowAdComplete() {
+    override fun onActivityStarted(activity: Activity) {}
 
-                    }
-                })
+    override fun onActivityResumed(activity: Activity) {
+        appOpenAdManager.showAdIfAvailable(activity, object : OnShowAdCompleteListener {
+            override fun onShowAdComplete() {
+
             }
-        }
+        })
     }
-
-    override fun onActivityResumed(activity: Activity) {}
 
     override fun onActivityPaused(activity: Activity) {}
 

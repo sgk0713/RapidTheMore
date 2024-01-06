@@ -9,14 +9,18 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.ui.base.BaseApp
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class AppOpenAdManager @Inject constructor(
 ) {
     private var appOpenAd: AppOpenAd? = null
     private var isLoadingAd = false
-    var isShowingAd = false
+    private var isAdDisplayable = AtomicBoolean(true)
 
+    fun setAdDisplayable(display: Boolean) {
+        isAdDisplayable.set(display)
+    }
 
     fun loadAd(context: Context) {
         if (isLoadingAd || isAdAvailable()) {
@@ -49,7 +53,7 @@ class AppOpenAdManager @Inject constructor(
         activity: Activity,
         onShowAdCompleteListener: BaseApp.OnShowAdCompleteListener,
     ) {
-        if (isShowingAd) {
+        if (isAdDisplayable.get().not()) {
             return
         }
 
@@ -63,7 +67,7 @@ class AppOpenAdManager @Inject constructor(
 
             override fun onAdDismissedFullScreenContent() {
                 appOpenAd = null
-                isShowingAd = false
+                setAdDisplayable(false)
 
                 onShowAdCompleteListener.onShowAdComplete()
                 loadAd(activity)
@@ -71,7 +75,7 @@ class AppOpenAdManager @Inject constructor(
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 appOpenAd = null
-                isShowingAd = false
+                setAdDisplayable(false)
 
                 onShowAdCompleteListener.onShowAdComplete()
                 loadAd(activity)
@@ -80,7 +84,7 @@ class AppOpenAdManager @Inject constructor(
             override fun onAdShowedFullScreenContent() {
             }
         }
-        isShowingAd = true
+        setAdDisplayable(false)
         appOpenAd?.show(activity)
     }
 }

@@ -83,18 +83,17 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
             adRewardViewContainer.setOnClickListener {
-                if (mRewardedAd != null && appOpenAdManager.isShowingAd.not()) {
-                    appOpenAdManager.isShowingAd = true
+                if (mRewardedAd != null) {
+                    appOpenAdManager.setAdDisplayable(false)
                     mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
 
                         override fun onAdDismissedFullScreenContent() {
                             mRewardedAd = null
-                            appOpenAdManager.isShowingAd = false
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                             mRewardedAd = null
-                            appOpenAdManager.isShowingAd = false
+                            appOpenAdManager.setAdDisplayable(true)
                             loadReward()
                         }
 
@@ -196,6 +195,11 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 binding.bannerWebView.loadData(html, "text/html", "utf-8")
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appOpenAdManager.setAdDisplayable(true)
     }
 
     override fun onViewCreatedSg(view: View, savedInstanceState: Bundle?) {
