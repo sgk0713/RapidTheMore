@@ -3,8 +3,8 @@
 
     <queries>
         <package android:name="com.samsung.android.spay" />
-        <package android:name="com.nhnent.payapp" />
         <package android:name="com.kbcard.cxh.appcard" />
+        <package android:name="com.naverfin.payapp" />
     </queries>
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <application
@@ -17,7 +17,8 @@
         android:theme="@style/Theme.RapidTheMore">
         <activity
             android:name="kr.evangers.rapidthemore.ui.activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

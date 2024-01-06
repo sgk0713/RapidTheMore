@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -64,7 +65,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     override fun initUi() {
         initialLayoutComplete = false
         with(binding) {
-            paycoButton.setOnClickListener { viewModel.launchPayco() }
+            naverPayButton.setOnClickListener { viewModel.launchNaverPay() }
             launchSPay.setOnClickListener { viewModel.launchSpay() }
             launchKbpay.setOnClickListener { viewModel.launchKbpay() }
             with(numberButtons) {
@@ -82,26 +83,26 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
             adRewardViewContainer.setOnClickListener {
-                if (mRewardedAd != null && appOpenAdManager.isShowingAd.not()) {
-                    appOpenAdManager.isShowingAd = true
+                if (mRewardedAd != null) {
+                    appOpenAdManager.setAdDisplayable(false)
                     mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
 
                         override fun onAdDismissedFullScreenContent() {
                             mRewardedAd = null
-                            appOpenAdManager.isShowingAd = false
-                            loadReward()
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                             mRewardedAd = null
-                            appOpenAdManager.isShowingAd = false
+                            appOpenAdManager.setAdDisplayable(true)
                             loadReward()
                         }
 
                         override fun onAdShowedFullScreenContent() {
+                            adRewardViewContainer.isVisible = false
                         }
                     }
                     mRewardedAd?.show(requireActivity()) {
+                        viewModel.onUserRewarded(it.type, it.amount)
                     }
                 }
 
@@ -139,7 +140,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 }
 
                 override fun onLoadResource(view: WebView?, url: String?) {
-                    hintForLanding.isVisible = (view?.contentHeight ?: 0) > 0
                     super.onLoadResource(view, url)
                 }
             }
@@ -153,7 +153,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     override fun initBinding() {
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
-            loadReward()
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
                 val result = formatter.format(it)
@@ -170,8 +169,8 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.longToastMessage?.getValueIfNotHandled()?.let {
                 requireContext().longToast(it)
             }
-            state.launchPayco?.getValueIfNotHandled()?.let {
-                launchPayco()
+            state.launchNaverPay?.getValueIfNotHandled()?.let {
+                launchNaverPay()
             }
             state.launchSpay?.getValueIfNotHandled()?.let {
                 launchSpay()
@@ -198,6 +197,11 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        appOpenAdManager.setAdDisplayable(true)
+    }
+
     override fun onViewCreatedSg(view: View, savedInstanceState: Bundle?) {
         super.onViewCreatedSg(view, savedInstanceState)
         viewModel.start()
@@ -206,14 +210,26 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
 
-    private fun launchPayco() {
-        val packageName = getString(R.string.payco_package)
+    private fun launchNaverPay() {
+        val packageName = getString(R.string.naverpay_package)
         if (isAppInstalled(packageName)) {
             viewModel.showPercentToast()
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.payco_launcher)))
+            val uri = Uri.Builder()
+                .scheme(getString(R.string.naverpay_schme))
+                .authority(getString(R.string.naverpay_host))
+                .appendQueryParameter(
+                    getString(R.string.naverpay_key_1),
+                    getString(R.string.naverpay_value_1)
+                )
+                .appendQueryParameter(
+                    getString(R.string.naverpay_key_2),
+                    getString(R.string.naverpay_value_2)
+                )
+                .build()
+            val intent = Intent(Intent.ACTION_VIEW, uri)
             viewModel.navToIntent(intent)
         } else {
-            viewModel.showToast(getString(R.string.no_payco_app))
+            viewModel.showToast(getString(R.string.no_naver_app))
         }
     }
 
@@ -257,7 +273,17 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
     private fun loadReward() {
-        if (isRewardAdRequesting || mRewardedAd != null) return
+        if (isRewardAdRequesting || mRewardedAd != null) {
+            binding.adRewardViewContainer.isVisible = false
+            return
+        }
+        binding.adRewardViewContainer.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.button_border
+            )
+        )
+        binding.rewardAdText.text = getString(R.string.ad_loading)
         isRewardAdRequesting = true
         val adRequest = AdRequest.Builder().build()
         RewardedInterstitialAd.load(requireContext(),
@@ -272,6 +298,14 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
                 override fun onAdLoaded(p0: RewardedInterstitialAd) {
                     super.onAdLoaded(p0)
+                    binding.adRewardViewContainer.isVisible = true
+                    binding.adRewardViewContainer.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.ad_enabled
+                        )
+                    )
+                    binding.rewardAdText.text = getString(R.string.ad_description)
                     isRewardAdRequesting = false
                     mRewardedAd = p0
                 }

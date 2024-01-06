@@ -161,26 +161,32 @@ class HomeViewModel @Inject constructor(
         liveData.postValue(state)
     }
 
-    fun launchPayco() {
-        firebaseEventLogger.logEvent(click_launchpay, mapOf(
-            param_app to payco
-        ))
-        state.update(HomeAction.LaunchPayco)
+    fun launchNaverPay() {
+        firebaseEventLogger.logEvent(
+            click_launchpay, mapOf(
+                param_app to naverpay
+            )
+        )
+        state.update(HomeAction.LaunchNaverPay)
         liveData.postValue(state)
     }
 
     fun launchSpay() {
-        firebaseEventLogger.logEvent(click_launchpay, mapOf(
-            param_app to samsungpay
-        ))
+        firebaseEventLogger.logEvent(
+            click_launchpay, mapOf(
+                param_app to samsungpay
+            )
+        )
         state.update(HomeAction.LaunchSpay)
         liveData.postValue(state)
     }
 
     fun launchKbpay() {
-        firebaseEventLogger.logEvent(click_launchpay, mapOf(
-            param_app to kbpay
-        ))
+        firebaseEventLogger.logEvent(
+            click_launchpay, mapOf(
+                param_app to kbpay
+            )
+        )
         state.update(HomeAction.LaunchKbpay)
         liveData.postValue(state)
     }
@@ -197,12 +203,23 @@ class HomeViewModel @Inject constructor(
         inputEventLoggerJob = CoroutineScope(Dispatchers.IO).launch {
             inputTimer.collect {
                 if (amount > 5000) {
-                    firebaseEventLogger.logEvent(input_price, mapOf(
-                        param_price to amount,
-                        param_ratio to ratio
-                    ))
+                    firebaseEventLogger.logEvent(
+                        input_price, mapOf(
+                            param_price to amount,
+                            param_ratio to ratio
+                        )
+                    )
                 }
             }
         }
+    }
+
+    fun onUserRewarded(type: String, amount: Int) {
+        firebaseEventLogger.logEvent(
+            "Rewarded", mapOf(
+                "type" to type,
+                "amount" to amount
+            )
+        )
     }
 }
