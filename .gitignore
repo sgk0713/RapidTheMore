@@ -43,6 +43,7 @@ local.properties
 # .idea 파일을 통째로 ignore하지 말고, 필요없다고 생각하는 것만 추가해 주세요.
 # ex) 개인적으로 사용하는 플러그인으로 생성된 파일들 등
 *.iml
+.idea/*
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
