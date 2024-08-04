@@ -19,6 +19,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://raw.githubusercontent.com/coupang-ads-sdk/android/main"
+            content {
+                includeModule("com.coupang", "ads")
+            }
+        }
     }
 }
 task clean(type: Delete) {

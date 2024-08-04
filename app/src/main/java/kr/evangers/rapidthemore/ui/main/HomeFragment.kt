@@ -5,24 +5,33 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import com.google.android.gms.ads.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.coupang.ads.config.AdsCreativeSize
+import com.coupang.ads.config.AdsMode
+import com.coupang.ads.tools.createAdsViewModel
+import com.coupang.ads.viewmodels.AdsViewModel
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
 import kr.evangers.rapidthemore.ui.base.ParentFragment
-import kr.evangers.rapidthemore.ui.util.AppOpenAdManager
 import kr.evangers.rapidthemore.ui.util.longToast
 import kr.evangers.rapidthemore.ui.util.shortToast
 import java.text.DecimalFormat
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : ParentFragment(R.layout.fragment_home) {
@@ -30,8 +39,15 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
 
-    @Inject
-    lateinit var appOpenAdManager: AppOpenAdManager
+    // create AdsViewModel instance
+    val coupangBannerViewmodel by lazy {
+        createAdsViewModel<AdsViewModel>(
+            widgetId = getString(R.string.coupang_bottom_banner_id), //Use your own widget id.
+            creativeSize = AdsCreativeSize.SMART_BANNER,
+            adsMode = AdsMode.AUTO,
+        )
+    }
+
 
     private lateinit var adView: AdView
     private var initialLayoutComplete = false
@@ -84,7 +100,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             }
             adRewardViewContainer.setOnClickListener {
                 if (mRewardedAd != null) {
-                    appOpenAdManager.setAdDisplayable(false)
                     mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
 
                         override fun onAdDismissedFullScreenContent() {
@@ -93,7 +108,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                             mRewardedAd = null
-                            appOpenAdManager.setAdDisplayable(true)
                             loadReward()
                         }
 
@@ -116,33 +130,7 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                     loadBanner()
                 }
             }
-            bannerWebView.settings.javaScriptEnabled = true
-            val script = """
-                <script src ="https://ads-partners.coupang.com/g.js"></script>
-                <script>
-                new PartnersCoupang.G({
-                    ${getString(R.string.coupang_json)}
-                });</script>
-            """.trimIndent()
-            val html = "<div>$script</div>"
-            bannerWebView.loadData(html, "text/html", "utf-8")
-            bannerWebView.webViewClient = object : WebViewClient() {
-                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                    return if (url?.startsWith("http") == true) {
-                        val intent = Intent(Intent.ACTION_VIEW, url?.toUri()).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        }
-                        requireActivity().startActivity(intent)
-                        true
-                    } else {
-                        super.shouldOverrideUrlLoading(view, url)
-                    }
-                }
-
-                override fun onLoadResource(view: WebView?, url: String?) {
-                    super.onLoadResource(view, url)
-                }
-            }
+            bannerWebView.bindViewModel(viewLifecycleOwner, coupangBannerViewmodel)
             loadReward()
         }
     }
@@ -152,6 +140,15 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     }
 
     override fun initBinding() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                coupangBannerViewmodel.loadAdData()
+                while (true) {
+                    delay(20_000L)
+                    coupangBannerViewmodel.loadAdData()
+                }
+            }
+        }
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
             state.amount.getValueIfNotHandled()?.let {
                 val formatter = DecimalFormat("#,###.##")
@@ -181,25 +178,11 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             state.intent?.getValueIfNotHandled()?.let {
                 navToIntent(it)
             }
-            state.adid?.getValueIfNotHandled()?.let { adidValue ->
-                val adidKeyValue = "\"deviceId\": \"${adidValue}\""
-                val json = getString(R.string.coupang_json) + ",${adidKeyValue}"
-                val script = """
-                <script src ="https://ads-partners.coupang.com/g.js"></script>
-                <script>
-                new PartnersCoupang.G({
-                    $json
-                });</script>
-            """.trimIndent()
-                val html = "<div>$script</div>"
-                binding.bannerWebView.loadData(html, "text/html", "utf-8")
-            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        appOpenAdManager.setAdDisplayable(true)
     }
 
     override fun onViewCreatedSg(view: View, savedInstanceState: Bundle?) {
