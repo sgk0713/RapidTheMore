@@ -5,26 +5,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import android.webkit.WebSettings
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.coupang.ads.config.AdsCreativeSize
-import com.coupang.ads.config.AdsMode
-import com.coupang.ads.tools.createAdsViewModel
-import com.coupang.ads.viewmodels.AdsViewModel
-import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.databinding.FragmentHomeBinding
@@ -38,16 +27,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
-
-    // create AdsViewModel instance
-    val coupangBannerViewmodel by lazy {
-        createAdsViewModel<AdsViewModel>(
-            widgetId = getString(R.string.coupang_bottom_banner_id), //Use your own widget id.
-            creativeSize = AdsCreativeSize.SMART_BANNER,
-            adsMode = AdsMode.AUTO,
-        )
-    }
-
 
     private lateinit var adView: AdView
     private var initialLayoutComplete = false
@@ -70,9 +49,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 adWidth
             )
         }
-    private var mRewardedAd: RewardedInterstitialAd? = null
-    private var isRewardAdRequesting = false
-
 
     override fun bindView(view: View) {
         binding = FragmentHomeBinding.bind(view)
@@ -98,30 +74,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                 buttonClear.setOnClickListener { viewModel.clearNumber() }
                 buttonRemove.setOnClickListener { viewModel.removeDigitLast() }
             }
-            adRewardViewContainer.setOnClickListener {
-                if (mRewardedAd != null) {
-                    mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-
-                        override fun onAdDismissedFullScreenContent() {
-                            mRewardedAd = null
-                        }
-
-                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                            mRewardedAd = null
-                            loadReward()
-                        }
-
-                        override fun onAdShowedFullScreenContent() {
-                            adRewardViewContainer.isVisible = false
-                        }
-                    }
-                    mRewardedAd?.show(requireActivity()) {
-                        viewModel.onUserRewarded(it.type, it.amount)
-                    }
-                }
-
-
-            }
             adView = AdView(requireContext())
             adBottomBannerViewContainer.addView(adView)
             adBottomBannerViewContainer.viewTreeObserver.addOnGlobalLayoutListener {
@@ -130,9 +82,45 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
                     loadBanner()
                 }
             }
-            bannerWebView.bindViewModel(viewLifecycleOwner, coupangBannerViewmodel)
-            loadReward()
+
+            // Coupang 파트너스 배너 설정
+            setupCoupangPartnersBanner()
         }
+    }
+
+    private fun setupCoupangPartnersBanner() {
+
+        binding.coupangPartnersWebView.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            cacheMode = WebSettings.LOAD_NO_CACHE
+        }
+
+        val htmlContent = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+                    .banner-container { width: 100%; display: flex; justify-content: center; align-items: center; }
+                </style>
+            </head>
+            <body>
+                <div class="banner-container">
+                <script src="https://ads-partners.coupang.com/g.js"></script>
+<script>
+	${getString(R.string.coupang_ad_script)}
+</script>
+                </div>
+            </body>
+            </html>
+        """.trimIndent()
+
+        binding.coupangPartnersWebView.loadData(htmlContent, "text/html", "UTF-8")
     }
 
     fun isAppInstalled(packageName: String): Boolean {
@@ -142,11 +130,8 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
     override fun initBinding() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                coupangBannerViewmodel.loadAdData()
-                while (true) {
-                    delay(20_000L)
-                    coupangBannerViewmodel.loadAdData()
-                }
+                // Coupang 파트너스 WebView를 사용하므로 기존 로직은 제거
+                // 필요한 경우 여기에 WebView 관련 추가 로직 구현
             }
         }
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
@@ -253,46 +238,6 @@ class HomeFragment : ParentFragment(R.layout.fragment_home) {
             .Builder()
             .build()
         adView.loadAd(adRequest)
-    }
-
-    private fun loadReward() {
-        if (isRewardAdRequesting || mRewardedAd != null) {
-            binding.adRewardViewContainer.isVisible = false
-            return
-        }
-        binding.adRewardViewContainer.setBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.button_border
-            )
-        )
-        binding.rewardAdText.text = getString(R.string.ad_loading)
-        isRewardAdRequesting = true
-        val adRequest = AdRequest.Builder().build()
-        RewardedInterstitialAd.load(requireContext(),
-            getString(R.string.admob_reward_unit_id),
-            adRequest,
-            object : RewardedInterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(p0: LoadAdError) {
-                    super.onAdFailedToLoad(p0)
-                    isRewardAdRequesting = false
-                    mRewardedAd = null
-                }
-
-                override fun onAdLoaded(p0: RewardedInterstitialAd) {
-                    super.onAdLoaded(p0)
-                    binding.adRewardViewContainer.isVisible = true
-                    binding.adRewardViewContainer.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.ad_enabled
-                        )
-                    )
-                    binding.rewardAdText.text = getString(R.string.ad_description)
-                    isRewardAdRequesting = false
-                    mRewardedAd = p0
-                }
-            })
     }
 
 }
