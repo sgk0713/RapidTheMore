@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_splash_banner_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string><!-- 무조건 떠야되는 테스트 id -->
     <string name="admob_home_banner_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string><!-- 무조건 떠야되는 테스트 id -->
     <string name="admob_open_unit_id" translatable="false">ca-app-pub-3940256099942544/9257395921</string><!-- 무조건 떠야되는 테스트 id -->
     <string name="admob_close_unit_id" translatable="false">ca-app-pub-3940256099942544/2247696110</string><!-- 무조건 떠야되는 테스트 id -->
     <string name="admob_reward_unit_id" translatable="false">ca-app-pub-3940256099942544/5354046379</string><!-- 무조건 떠야되는 테스트 id -->
-    <string name="coupang_json" translatable="false"></string>
+    <string name="coupang_ad_script" translatable="false"></string><!-- 실제 id -->
 </resources>

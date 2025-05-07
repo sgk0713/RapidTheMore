@@ -6,16 +6,8 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false"
+    android:fitsSystemWindows="true"
     tools:context=".ui.main.HomeFragment">
-
-    <FrameLayout
-        android:id="@+id/ad_bottom_banner_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/textContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +18,7 @@
         app:layout_constraintBottom_toTopOf="@id/adRewardViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ad_bottom_banner_view_container">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <TextView
@@ -98,29 +90,25 @@
             tools:text="5,999" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:id="@+id/adRewardViewContainer"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:background="@color/button_border"
         app:layout_constraintBottom_toTopOf="@id/numberButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textContainer">
 
-        <TextView
-            android:id="@+id/rewardAdText"
+        <WebView
+            android:id="@+id/coupangPartnersWebView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/ad_loading"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 
     <include
@@ -142,7 +130,7 @@
         android:layout_marginTop="20dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/bannerWebView"
+        app:layout_constraintBottom_toTopOf="@id/ad_bottom_banner_view_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numberButtons">
@@ -189,13 +177,14 @@
             app:layout_constraintTop_toTopOf="@id/launchSPay" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <WebView
-        android:id="@+id/bannerWebView"
+    <FrameLayout
+        android:id="@+id/ad_bottom_banner_view_container"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonsContainer"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintTop_toBottomOf="@id/buttonsContainer" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
