@@ -9,6 +9,13 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.main.HomeFragment">
 
+    <FrameLayout
+        android:id="@+id/ad_top_banner_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/textContainer"
@@ -18,7 +25,7 @@
         app:layout_constraintBottom_toTopOf="@id/adRewardViewContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/ad_top_banner_view_container">
 
 
         <TextView
@@ -130,7 +137,7 @@
         android:layout_marginTop="20dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/ad_bottom_banner_view_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numberButtons">
@@ -176,15 +183,5 @@
             app:layout_constraintStart_toEndOf="@id/launchKbpay"
             app:layout_constraintTop_toTopOf="@id/launchSPay" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/ad_bottom_banner_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonsContainer" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
