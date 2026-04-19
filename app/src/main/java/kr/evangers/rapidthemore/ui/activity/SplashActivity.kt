@@ -37,6 +37,9 @@ class SplashActivity : ComponentActivity() {
     private var webView: WebView? = null
     private var lastIntentFiredAt = 0L
     private val clickGuard = AtomicBoolean(false)
+    private val retryHandler = Handler(Looper.getMainLooper())
+    private var pendingRetry: Runnable? = null
+    private var retryCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +54,7 @@ class SplashActivity : ComponentActivity() {
                     clickGuard = clickGuard,
                     onWebViewCreated = { webView = it },
                     onExternalUrl = { url -> fireExternal(url) },
+                    onClickDispatched = { scheduleRetryCheck() },
                     onBackPressed = { finish() }
                 )
             }
@@ -60,6 +64,10 @@ class SplashActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         clickGuard.set(false)
+        retryCount = 0
+        lastIntentFiredAt = 0L
+        pendingRetry?.let { retryHandler.removeCallbacks(it) }
+        pendingRetry = null
         webView?.let { reloadBanner(it) }
     }
 
@@ -68,10 +76,29 @@ class SplashActivity : ComponentActivity() {
         web.loadData(buildBannerHtml(coupangScript), "text/html", "UTF-8")
     }
 
+    private fun scheduleRetryCheck() {
+        pendingRetry?.let { retryHandler.removeCallbacks(it) }
+        val dispatchedAt = SystemClock.elapsedRealtime()
+        val runnable = Runnable {
+            if (lastIntentFiredAt >= dispatchedAt) return@Runnable
+            if (retryCount >= MAX_CLICK_RETRIES) return@Runnable
+            retryCount++
+            clickGuard.set(false)
+            webView?.evaluateJavascript(
+                "window.__retryCoupangClick && window.__retryCoupangClick();",
+                null
+            )
+        }
+        pendingRetry = runnable
+        retryHandler.postDelayed(runnable, CLICK_RETRY_DELAY_MS)
+    }
+
     private fun fireExternal(url: String) {
         val now = SystemClock.elapsedRealtime()
         if (now - lastIntentFiredAt < 2000L) return
         lastIntentFiredAt = now
+        pendingRetry?.let { retryHandler.removeCallbacks(it) }
+        pendingRetry = null
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -82,9 +109,16 @@ class SplashActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        pendingRetry?.let { retryHandler.removeCallbacks(it) }
+        pendingRetry = null
         webView?.destroy()
         webView = null
         super.onDestroy()
+    }
+
+    companion object {
+        private const val MAX_CLICK_RETRIES = 20
+        private const val CLICK_RETRY_DELAY_MS = 200L
     }
 }
 
@@ -104,18 +138,28 @@ private fun buildBannerHtml(coupangScript: String): String {
                 return null;
             }
 
+            function dispatchClick(iframe) {
+                var r = iframe.getBoundingClientRect();
+                if (r.width < 50 || r.height < 20) return;
+                var dpr = window.devicePixelRatio || 1;
+                var cx = (r.left + r.width / 2) * dpr;
+                var cy = (r.top + r.height / 2) * dpr;
+                try { AndroidBannerBridge.onIframeReady(cx, cy); } catch (e) {}
+            }
+
+            window.__retryCoupangClick = function() {
+                var iframe = document.querySelector('iframe');
+                if (!iframe) return;
+                dispatchClick(iframe);
+            };
+
             function tryClickIframe() {
                 var iframe = document.querySelector('iframe');
                 if (!iframe) return false;
                 var rect = iframe.getBoundingClientRect();
                 if (rect.width < 50 || rect.height < 20) return false;
                 fired = true;
-                setTimeout(function() {
-                    var dpr = window.devicePixelRatio || 1;
-                    var cx = (rect.left + rect.width / 2) * dpr;
-                    var cy = (rect.top + rect.height / 2) * dpr;
-                    try { AndroidBannerBridge.onIframeReady(cx, cy); } catch (e) {}
-                }, 300);
+                dispatchClick(iframe);
                 return true;
             }
 
@@ -167,7 +211,8 @@ private fun buildBannerHtml(coupangScript: String): String {
 
 private class BannerClickBridge(
     private val guard: AtomicBoolean,
-    private val webViewProvider: () -> WebView?
+    private val webViewProvider: () -> WebView?,
+    private val onClickDispatched: () -> Unit
 ) {
     @JavascriptInterface
     fun onIframeReady(deviceX: Float, deviceY: Float) {
@@ -191,6 +236,7 @@ private class BannerClickBridge(
                 ).apply { source = InputDevice.SOURCE_TOUCHSCREEN }
                 view.dispatchTouchEvent(up)
                 up.recycle()
+                onClickDispatched()
             }, 80L)
         }
     }
@@ -203,6 +249,7 @@ fun CoupangLinkScreen(
     clickGuard: AtomicBoolean = AtomicBoolean(false),
     onWebViewCreated: (WebView) -> Unit = {},
     onExternalUrl: (String) -> Unit = {},
+    onClickDispatched: () -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
     BackHandler { onBackPressed() }
@@ -232,7 +279,8 @@ fun CoupangLinkScreen(
                         addJavascriptInterface(
                             BannerClickBridge(
                                 guard = clickGuard,
-                                webViewProvider = { web }
+                                webViewProvider = { web },
+                                onClickDispatched = onClickDispatched
                             ),
                             "AndroidBannerBridge"
                         )
